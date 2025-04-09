@@ -23,9 +23,9 @@ class BitcoinExchange: public std::map<std::string, float>
 
     private:
         bool isLeapYear(int year) const;
-        bool isValidDateFormat(std::string date) const;
-        bool isValidRateFormat(std::string rate) const;
-        bool isValidValueFormat(std::string cmp) const;
+        bool isValidDateFormat(std::string date, const std::string line) const;
+        bool isValidRateFormat(std::string rate, const std::string line) const;
+        bool isValidValueFormat(std::string cmp, const std::string line) const;
 
         void outputResult(std::string key, float value) const;
 

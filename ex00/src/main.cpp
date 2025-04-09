@@ -13,14 +13,14 @@ int main(int argc, char **argv)
     try
     {
         // store _db data in a map
-        std::cout << std::endl << "========loading db============" << std::endl;
+        // std::cout << std::endl << "========loading db============" << std::endl;
         btc.dbInsert(db);
-        std::cout << std::endl << "==============================" << std::endl;
+        // std::cout << std::endl << "==============================" << std::endl;
         
         // compute output
-        std::cout << std::endl << "========computing input=======" << std::endl;
+        // std::cout << std::endl << "========computing input=======" << std::endl;
         btc.computeInput(argv[1]);
-        std::cout << std::endl << "==============================" << std::endl;
+        // std::cout << std::endl << "==============================" << std::endl;
     }
     catch (const std::exception& e)
     {

@@ -14,13 +14,21 @@ BitcoinExchange& BitcoinExchange::operator=(BitcoinExchange &src)
         return (*this);
     this->clear();
     std::map<std::string, float>::operator=(src);
+    for (BitcoinExchange::const_iterator it = src.begin(); it != src.end(); it++)
+        this->insert(std::pair<std::string, float>(it->first, it->second));
     return (*this);
 }
 
 BitcoinExchange::~BitcoinExchange(void)
 {}
 
-// methods
+// utils methods
+void BitcoinExchange::printData(void) const
+{
+    for (BitcoinExchange::const_iterator it = this->begin(); it != this->end(); it++)
+        std::cout << "\e[33mkey: " << it->first << " value: " << it->second << std::endl;
+}
+
 bool BitcoinExchange::isLeapYear(int year) const
 {
     return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
@@ -28,8 +36,9 @@ bool BitcoinExchange::isLeapYear(int year) const
 
 // Database processing
 // YYYY-MM-DD
-bool BitcoinExchange::isValidDateFormat(std::string date) const
+bool BitcoinExchange::isValidDateFormat(std::string date, const std::string line) const
 {
+    (void)line;
     if (date.length() != 10 || date[4] != '-' || date[7] != '-')
         return (false);
     for (size_t i = 0; i < date.length() ; i++)
@@ -61,8 +70,10 @@ bool BitcoinExchange::isValidDateFormat(std::string date) const
     return (true);
 }
 
-bool BitcoinExchange::isValidRateFormat(std::string rate) const
+// middleware of db file
+bool BitcoinExchange::isValidRateFormat(std::string rate, const std::string line) const
 {
+    (void)line;
     float   _ratef;
     size_t  _dotocc;
 
@@ -83,7 +94,8 @@ bool BitcoinExchange::isValidRateFormat(std::string rate) const
     return (true);
 }
 
-bool BitcoinExchange::isValidValueFormat(std::string cmp) const
+// middleware of input file
+bool BitcoinExchange::isValidValueFormat(std::string cmp, const std::string line) const
 {
     float   _ratef;
     size_t  _dotocc;
@@ -96,7 +108,10 @@ bool BitcoinExchange::isValidValueFormat(std::string cmp) const
         if (cmp[i] == '.') _dotocc++;
 
     if (_dotocc > 1 || cmp[cmp.length() - 1] == '.' || (cmp.substr(0, cmp.find_last_of(" ") + 1).compare(" | ")))
+    {
+        std::cerr << "\e[31mError: bad input => " + line + "\e[0m" << std::endl;
         return (false);
+    }
 
     cmp = cmp.substr(3, cmp.length());
     for (size_t i = 0; i < cmp.length(); i++)
@@ -108,7 +123,7 @@ bool BitcoinExchange::isValidValueFormat(std::string cmp) const
         }
         else if (!std::isdigit(cmp[i]) && cmp[i] != '.')
         {
-            std::cerr << "\e[31mError: invalid value " << cmp << ".\e[0m" << std::endl;
+            std::cerr << "\e[31mError: bad input => " + line + "\e[0m" << std::endl;
             return (false);
         }
     }
@@ -121,6 +136,7 @@ bool BitcoinExchange::isValidValueFormat(std::string cmp) const
     return (true);
 }
 
+// db loader in memory
 void BitcoinExchange::dbInsert(std::string db)
 {
     std::string     line;
@@ -139,23 +155,17 @@ void BitcoinExchange::dbInsert(std::string db)
     
     while (std::getline(file, line))
     {
-        if (line.length() <= 11 || !isValidDateFormat(line.substr(0, line.find(","))) || !isValidRateFormat(line.substr(11, line.find(EOF))))
+        if (line.length() <= 11 || !isValidDateFormat(line.substr(0, line.find(",")), line) || !isValidRateFormat(line.substr(11, line.find(EOF)), line))
         {
-            std::cerr << "\e[31mError: non valid entry -> " << line << "\e[0m" << std::endl;
+            std::cerr << "\e[31mError: " << db << " non valid entry -> " << line << "\e[0m" << std::endl;
             continue;
         }
         this->insert(std::pair<std::string, float>(line.substr(0, line.find(",")), std::atof(line.substr(11, line.find(EOF)).c_str())));
-        std::cout << "\e[32m" << db << ": loaded record -> " << line << "\e[0m" << std::endl;
+        // std::cout << "\e[32m" << db << ": loaded record -> " << line << "\e[0m" << std::endl;
     }
-    // printData();
 }
 
-void BitcoinExchange::printData(void) const
-{
-    for (BitcoinExchange::const_iterator it = this->begin(); it != this->end(); it++)
-        std::cout << "\e[33mkey: " << it->first << " value: " << it->second << std::endl;
-}
-
+// Output result
 void BitcoinExchange::outputResult(std::string key, float value) const
 {
     float result;
@@ -174,7 +184,7 @@ void BitcoinExchange::outputResult(std::string key, float value) const
     std::cout << "\e[32m" << key << " => " << value << " = " << result << std::endl;
 }
 
-// Input calculator
+// Input parser
 void BitcoinExchange::computeInput(std::string input)
 {
     std::string     line;
@@ -192,12 +202,12 @@ void BitcoinExchange::computeInput(std::string input)
 
     while (std::getline(file, line))
     {
-        if (!isValidDateFormat(line.substr(0, line.find(" "))))
+        if (!isValidDateFormat(line.substr(0, line.find(" ")), line) || line.length() < 14)
         {
             std::cerr << "\e[31mError: bad input => " + line + "\e[0m" << std::endl;
             continue;
         }
-        else if (line.length() < 14 || !isValidValueFormat(line.substr(10, line.find(EOF))))
+        else if (!isValidValueFormat(line.substr(10, line.find(EOF)), line))
             continue;
         this->outputResult(line.substr(0, line.find(" ")), atof(line.substr(13, line.find(EOF)).c_str()));
     }
