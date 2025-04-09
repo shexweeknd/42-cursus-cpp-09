@@ -1,5 +1,5 @@
-# NAME =  btc
-NAME =  btc
+# NAME =  RPN
+NAME =  RPN
 
 CXX = c++
 
@@ -12,7 +12,7 @@ OBJ_DIR = ./out/
 
 # FILES
 SRC_FILES	= main.cpp \
-				BitcoinExchange.cpp \
+				RPN.cpp \
 
 OBJ_FILES 	= $(SRC_FILES:.cpp=.o)
 

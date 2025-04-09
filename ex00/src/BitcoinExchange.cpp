@@ -109,7 +109,7 @@ bool BitcoinExchange::isValidValueFormat(std::string cmp, const std::string line
 
     if (_dotocc > 1 || cmp[cmp.length() - 1] == '.' || (cmp.substr(0, cmp.find_last_of(" ") + 1).compare(" | ")))
     {
-        std::cerr << "\e[31mError: bad input => " + line + "\e[0m" << std::endl;
+        std::cout << "\e[31mError: bad input => " + line + "\e[0m" << std::endl;
         return (false);
     }
 
@@ -118,19 +118,19 @@ bool BitcoinExchange::isValidValueFormat(std::string cmp, const std::string line
     {
         if (std::atof(cmp.c_str()) < 0)
         {
-            std::cerr << "\e[31mError: not a positive number.\e[0m" << std::endl;
+            std::cout << "\e[31mError: not a positive number.\e[0m" << std::endl;
             return (false);
         }
         else if (!std::isdigit(cmp[i]) && cmp[i] != '.')
         {
-            std::cerr << "\e[31mError: bad input => " + line + "\e[0m" << std::endl;
+            std::cout << "\e[31mError: bad input => " + line + "\e[0m" << std::endl;
             return (false);
         }
     }
     _ratef = std::atof(cmp.c_str());
     if (_ratef >= static_cast<float>(2147483648))
     {
-        std::cerr << "\e[31mError: too large a number." << "\e[0m" << std::endl;
+        std::cout << "\e[31mError: too large a number." << "\e[0m" << std::endl;
         return (false);
     }
     return (true);
@@ -157,7 +157,7 @@ void BitcoinExchange::dbInsert(std::string db)
     {
         if (line.length() <= 11 || !isValidDateFormat(line.substr(0, line.find(",")), line) || !isValidRateFormat(line.substr(11, line.find(EOF)), line))
         {
-            std::cerr << "\e[31mError: " << db << " non valid entry -> " << line << "\e[0m" << std::endl;
+            std::cout << "\e[31mError: " << db << " non valid entry -> " << line << "\e[0m" << std::endl;
             continue;
         }
         this->insert(std::pair<std::string, float>(line.substr(0, line.find(",")), std::atof(line.substr(11, line.find(EOF)).c_str())));
@@ -176,7 +176,7 @@ void BitcoinExchange::outputResult(std::string key, float value) const
         result = it->second * value;
     else if (it == this->begin())
     {
-        std::cerr << "\e[31mError: not found because no nearest date.\e[0m" << std::endl;
+        std::cout << "\e[31mError: not found because no nearest date.\e[0m" << std::endl;
         return;
     }
     else
@@ -204,7 +204,7 @@ void BitcoinExchange::computeInput(std::string input)
     {
         if (!isValidDateFormat(line.substr(0, line.find(" ")), line) || line.length() < 14)
         {
-            std::cerr << "\e[31mError: bad input => " + line + "\e[0m" << std::endl;
+            std::cout << "\e[31mError: bad input => " + line + "\e[0m" << std::endl;
             continue;
         }
         else if (!isValidValueFormat(line.substr(10, line.find(EOF)), line))

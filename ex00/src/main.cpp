@@ -5,7 +5,7 @@ int main(int argc, char **argv)
     std::string db = "./assets/data.csv";
     if (argc != 2)
     {
-        std::cerr << "\e[31mError: wrong number of args\e[0m" << std::endl;
+        std::cout << "\e[31mError: wrong number of args\e[0m" << std::endl;
         return (1);
     }
     BitcoinExchange btc;
@@ -24,7 +24,7 @@ int main(int argc, char **argv)
     }
     catch (const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        std::cout << e.what() << '\n';
     }
     return (0);
 }
