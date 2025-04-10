@@ -16,21 +16,18 @@ class PmergeMe
         PmergeMe&operator=(PmergeMe &src);
         ~PmergeMe();
 
-        void insertDeque(unsigned int value);
-        void insertVector(unsigned int value);
+        void insert(unsigned int value);
 
-        void sortDeque(void);
-        void sortVector(void);
+        void fordJohnsonSort(void);
 
         void dequeSpitter(void);
         void vectorSpitter(void);
 
-        void displayDequeTime(void);
-        void displayVectorTime(void);
+        void displayTime(void);
 
     private:
-        std::deque<unsigned int> dque;
-        std::vector<unsigned int> vect;
+        std::deque<unsigned int>    dque;
+        std::vector<unsigned int>   vect;
 
         float dqueTime;
         float vectTime;

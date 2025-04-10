@@ -18,19 +18,14 @@ int main(int argc, char **argv)
         return (1);
     }
     for (size_t i = 0; argv[i]; i++)
-    {
-        merger.insertVector(atoi(argv[i]));
-        merger.insertDeque(atoi(argv[i]));
-    }
+        merger.insert(atoi(argv[i]));
     std::cout << "Before:   "; merger.dequeSpitter(); std::cout << std::endl;
 
-    merger.sortDeque();
-    merger.sortVector();
+    merger.fordJohnsonSort();
 
     std::cout << "After:    "; merger.dequeSpitter(); std::cout << std::endl;
 
-    merger.displayDequeTime();
-    merger.displayDequeTime();
+    merger.displayTime();
 
     return (0);
 }
