@@ -8,7 +8,9 @@ void RPN(std::string input)
     int first;
     int second;
 
-    if ((!(iss >> first) || !(iss >> second)) || (first > 10 || second > 10))
+    if ((!(iss >> first) || !(iss >> second))
+        || (first < 0 || second < 0)
+        || (first >= 10 || second >= 10))
     {
         std::cout << "\e[31mError\e[0m" << std::endl;
         return ;
@@ -19,7 +21,7 @@ void RPN(std::string input)
 
     while (iss >> token)
     {
-        if (atoi(token.c_str()) >= 10)
+        if (atoi(token.c_str()) >= 10 || atoi(token.c_str()) < 0)
         {
             std::cout << "\e[31mError\e[0m" << std::endl;
             return ;
